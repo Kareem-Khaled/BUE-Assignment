@@ -1,10 +1,20 @@
- .App-header {
-   background-color: #282c34;
-   min-height: 100vh;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   /* font-size: calc(10px + 2vmin); */
-   color: white;
- }
+.App-container {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+
+.App-footer {
+  margin-top: auto;
+}
+
+
+.App-logo {
+  height: 140px;
+  margin-right: 120px;
+}

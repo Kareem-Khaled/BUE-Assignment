@@ -1,12 +1,16 @@
 import './App.css';
+import Header from './components/Header';
 import RegisterForm from './components/RegisterForm';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <div className="App-container">
+        <Header />
         <RegisterForm />
-      </header>
+        <Footer />
+      </div>
     </div>
   );
 }
