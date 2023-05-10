@@ -22,8 +22,8 @@ function RegisterForm() {
 }
 
   return (
-    <>
-	  <form onSubmit={handleSubmit}>
+	<div style={{width : '70%'}}>
+		<form onSubmit={handleSubmit}>
 		<h2 className="mb-4 display-5">User Registration Form</h2>
 		<div className='row'>
 			<Form.Group className="mb-3 col-5">
@@ -48,17 +48,17 @@ function RegisterForm() {
 
 		</div>
 		<Button variant="success" type="submit">
-			Save Your Data
+			Save Data
 		</Button>
 		<span>
 			<a href="/view">
 				<Button variant="primary" className="mx-2">
-					Show Full Data
+					Show Data Table
 				</Button>
 			</a>
 		</span>
 	  </form>
-	</>
+	</div>
   );
 }
 

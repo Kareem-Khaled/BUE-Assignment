@@ -5,7 +5,7 @@ import {
   Route
 } from 'react-router-dom';
 import MainPage from './pages';
-import DataTable from './pages/view';
+import TablePage from './pages/view';
 import ErrorMessage from './pages/error';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -18,7 +18,7 @@ function App() {
         <Router>
             <Routes>
               <Route path="/" element={<MainPage />} />
-              <Route path="/view" element={<DataTable />} />
+              <Route path="/view" element={<TablePage />} />
               <Route path="*" element={<ErrorMessage
                 messages={[
                   "Oops! The page you're looking for doesn't exist.",
