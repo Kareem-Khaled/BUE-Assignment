@@ -22,7 +22,10 @@ function DataTable() {
 		setData(data)
 		setIsLoading(false);
 	})
-	.catch(error => console.error(error));
+	.catch(error => {
+		console.error(error);
+		alert('Oops! Something went wrong.');
+	});
   }, [timestamp]);
 
   const handleEditClick = (item) => {
@@ -34,18 +37,31 @@ function DataTable() {
 	const age = Number(formData.age);
 	formData.age = (isNaN(age) ? 0 : age);
 	console.log(formData);
-	const response = await fetch(`https://localhost:7215/api/Users/${formData.id}`, {
+	fetch(`https://localhost:7215/api/Users/${formData.id}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(formData)
+	})
+	.then(async (response) => {
+		if(response.status === 204){
+			setTimestamp(Date.now());
+			setIsEditing(false);
+		}
+		else{
+			const jsonData = await response.json();
+			let errorMessage = "Oops! Something went wrong.\n";
+			for (const [key, value] of Object.entries(jsonData.errors)) {
+			  errorMessage += `\n${key}: ${value.join('\n')}\n-----------------------------------------`;
+			}
+			alert(errorMessage);
+		}
+	})
+	.catch(error => {
+		console.log(error);
+		alert('Oops! Something went wrong.');
 	});
-	console.log(response);
-	if(response.status === 204){
-		setTimestamp(Date.now());
-		setIsEditing(false);
-	}
 }
 
   const handleCancelClick = () => {

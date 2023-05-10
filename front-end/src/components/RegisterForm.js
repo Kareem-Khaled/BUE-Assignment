@@ -9,16 +9,31 @@ function RegisterForm() {
 	const payload = Object.fromEntries(data);
 	const age = Number(payload.age);
 	payload.age = (isNaN(age) ? 0 : age);
-	console.log(payload);
-	const response = await fetch('https://localhost:7215/api/Users', {
+	fetch('https://localhost:7215/api/Users', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(payload)
+	})
+	.then(async (response) => {
+		if(response.status === 201){
+			alert('User Created Successfully!');
+			window.location.reload();
+		}
+		else{
+			const jsonData = await response.json();
+			let errorMessage = "Oops! Something went wrong.\n";
+			for (const [key, value] of Object.entries(jsonData.errors)) {
+			  errorMessage += `\n${key}: ${value.join('\n')}\n-----------------------------------------`;
+			}
+			alert(errorMessage);
+		}
+	})
+	.catch(error => {
+		console.log(error);
+		alert('Oops! Something went wrong.');
 	});
-	const responseJson = await response.json();
-	console.log(responseJson);
 }
 
   return (
