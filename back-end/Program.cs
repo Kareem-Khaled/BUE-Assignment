@@ -1,4 +1,5 @@
 using back_end;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,17 @@ builder.Services.AddDbContext<UserContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// Enable CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "Any", 
+    builder =>
+    {
+        builder.AllowAnyOrigin();
+        builder.AllowAnyHeader();
+        builder.AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -26,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Any");
 
 app.UseAuthorization();
 

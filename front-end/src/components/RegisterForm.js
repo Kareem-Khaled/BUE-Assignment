@@ -3,11 +3,22 @@ import { Form, Button } from 'react-bootstrap';
 
 function RegisterForm() {
 
-  const handleSubmit = (event) => {
-    // event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 	const data = new FormData(event.target);
 	const payload = Object.fromEntries(data);
+	const age = Number(payload.Age);
+	payload.Age = (isNaN(age) ? 0 : age);
 	console.log(payload);
+	const response = await fetch('https://localhost:7215/api/Users', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(payload)
+	});
+	const responseJson = await response.json();
+	console.log(responseJson);
 }
 
   return (
@@ -17,22 +28,22 @@ function RegisterForm() {
 		<div className='row'>
 			<Form.Group className="mb-3 col-5">
 				<Form.Label className="h6">Name</Form.Label>
-				<Form.Control type="text" name='name' placeholder='Enter Your Name'/>
+				<Form.Control type="text" name='Name' placeholder='Enter Your Name'/>
 			</Form.Group>
 
 			<Form.Group className="mb-3 col-5">
 				<Form.Label className="h6">Email</Form.Label>
-				<Form.Control type="text" name='email' placeholder='Enter Your Email'/>
+				<Form.Control type="text" name='Email' placeholder='Enter Your Email'/>
 			</Form.Group>
 
 			<Form.Group className="mb-3 col-5">
 				<Form.Label className="h6">Phone Number</Form.Label>
-				<Form.Control type="text" name='phone' placeholder='Enter Your Phone Number'/>
+				<Form.Control type="text" name='Phone' placeholder='Enter Your Phone Number'/>
 			</Form.Group>
 
 			<Form.Group className="mb-3 col-5">
 				<Form.Label className="h6">Age</Form.Label>
-				<Form.Control type="number" name='age' placeholder='Enter Your Age'/>
+				<Form.Control type="number" name='Age' placeholder='Enter Your Age'/>
 			</Form.Group>
 
 		</div>
