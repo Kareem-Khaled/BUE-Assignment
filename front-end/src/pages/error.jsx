@@ -1,12 +1,20 @@
 import React from 'react';
-function ErrorPage() {
-	return (
-		<>
-			<h1 className='display-5' style={{color: '#ff5a5f'}}>Oops! The page you're looking for doesn't exist.</h1>
-			<p className='h4 my-3'>We're sorry, but the page you requested cannot be found.</p>
-			<p className='h4 my-3'>Please check the URL and try again.</p>
-		</>
-	  );
+
+function ErrorMessage({ messages }) {
+  const [header, ...paragraphs] = messages;
+
+  return (
+    <>
+      <h1 className='display-5' style={{ color: '#ff5a5f' }}>
+        {header}
+      </h1>
+      {paragraphs.map((message, index) => (
+        <p className='h4 my-3' key={index}>
+          {message}
+        </p>
+      ))}
+    </>
+  );
 }
 
-export default ErrorPage;
+export default ErrorMessage;

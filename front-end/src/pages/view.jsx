@@ -1,11 +1,13 @@
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import React, { useState, useEffect } from 'react';
+import ErrorMessage from '../pages/error';
 
 function DataTable() {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [data, setData] = useState([]);
   const [timestamp, setTimestamp] = useState(Date.now());
 
   useEffect(() => {
@@ -18,7 +20,7 @@ function DataTable() {
 	.then(response => response.json())
 	.then(data => {
 		setData(data)
-		console.log(data);
+		setIsLoading(false);
 	})
 	.catch(error => console.error(error));
   }, [timestamp]);
@@ -44,18 +46,23 @@ function DataTable() {
 		setTimestamp(Date.now());
 		setIsEditing(false);
 	}
-	// const responseJson = await response.json();
-	// console.log(responseJson);
-
 }
 
   const handleCancelClick = () => {
     setIsEditing(false);
   };
 
-  const handleDeleteClick = (id) => {
-    console.log('Delete clicked for id:', id);
-    // Replace this with your custom delete handler logic
+  const handleDeleteClick = async (id) => {
+	const response = await fetch(`https://localhost:7215/api/Users/${id}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+	});
+	console.log(response);
+	if(response.status === 204){
+		setTimestamp(Date.now());
+	}
   };
 
   const [formData, setFormData] = useState({
@@ -72,82 +79,112 @@ function DataTable() {
 	console.log(formData);
   };
 
-  return (
-	<div style={{width : '85%'}}>
-	<h2 className="mb-4 display-5">Users Data</h2>
-	  <Table striped bordered hover variant='light'>
-		<thead>
-		  <tr>
-			<th className='h5'>#</th>
-			<th className='h5'>name</th>
-			<th className='h5'>age</th>
-			<th className='h5'>email</th>
-			<th className='h5'>phone</th>
-		  </tr>
-		</thead>
-		<tbody>
-		  {data.map((item) => {
-			const isItemHovered = isHovered === item.id;
+// if(!data.length){
+// 	return(
+// 		<ErrorMessage messages={[
+// 			  "Oops! We couldn't load the data at this time.",
+// 		  'Try to add some data from the link below.',
+// 		  <a href='http://localhost:3000/'>User Register</a>
+// 		]} />
 
-			return (
-			  <tr
-				key={item.id}
-				id={item.id}
-				onMouseEnter={() => setIsHovered(item.id)}
-				onMouseLeave={() => setIsHovered(null)}
-			  >
-				<td style={{ width: '120px', height: '55px' }}>
-				  {isEditing === item.id ? (
-					<>
-					  <a href="#" onClick={(e) => { e.preventDefault(); handleSaveClick(item); }}>Save</a>{' '}
-					  <a href="#" onClick={(e) => { e.preventDefault(); handleCancelClick(); }}>Cancel</a>
-					</>
-				  ) : (
-					<>
-					  {isItemHovered && (
-						<>
-						  <a href="#" onClick={(e) => {e.preventDefault(); handleEditClick(item);}}>Edit</a>{' '}
-						  <a href="#" onClick={(e) => {e.preventDefault(); handleDeleteClick(item.id);}}>Delete</a>{' '}
-						</>
-					  )}
-					  {!isItemHovered && <div className='h6'> {item.id} </div>}
-					</>
-				  )}
-				</td>
-				<td>
-				  {isEditing === item.id ? (
-					<Form.Control type='text' name='name' value={formData.name} onChange={handleInputChange}/>
-				  ) : (
-					<div className='h6'> {item.name} </div>
-				  )}
-				</td>
-				<td>
-				  {isEditing === item.id ? (
-					<Form.Control type='number' name='age' value={formData.age} onChange={handleInputChange}/>
-				  ) : (
-					<div className='h6'> {item.age} </div>
-				  )}
-				</td>
-				<td>
-				  {isEditing === item.id ? (
-					<Form.Control type='email' name='email' value={formData.email} onChange={handleInputChange} />
-				  ) : (
-					<div className='h6'>{item.email} </div>
-				  )}
-				</td>
-				<td>
-				  {isEditing === item.id ? (
-					<Form.Control type='text' name='phone' value={formData.phone} onChange={handleInputChange}/>
-				  ) : (
-					<div className='h6'> {item.phone} </div>
-				  )}
-				</td>
+// 	);
+// }
+
+return (
+	<>
+	{!isLoading && data.length === 0 && (
+		<>
+		<ErrorMessage messages={[
+			"Oops! We couldn't load the data at this time.",
+			'Try to add some data from the link below.',
+			<a href='http://localhost:3000/'>User Registration Form</a>
+		]} />
+		</>
+	  )}
+	  {isLoading && ( <div className='display-4'>Loading...</div> )}
+		  {!isLoading && data.length !== 0 && (
+		  <div style={{width : '85%'}}>
+			<div className="d-flex d-flex-row justify-content-between">
+				<h2 className="mb-2 display-6">Users Data</h2>
+				<h2 className="mb-2 h5 mt-auto">
+				<a href='http://localhost:3000/'>+Add New User</a>
+				</h2>
+			</div>
+		  <Table striped bordered hover variant='light'>
+			  <thead>
+			  <tr>
+				  <th className='h5'>#</th>
+				  <th className='h5'>name</th>
+				  <th className='h5'>age</th>
+				  <th className='h5'>email</th>
+				  <th className='h5'>phone</th>
 			  </tr>
-			);
-		  })}
-		</tbody>
-	  </Table>
-	</div>
+			  </thead>
+			  <tbody>
+			  {data.map((item) => {
+				  const isItemHovered = isHovered === item.id;
+
+				  return (
+				  <tr
+					  key={item.id}
+					  id={item.id}
+					  onMouseEnter={() => setIsHovered(item.id)}
+					  onMouseLeave={() => setIsHovered(null)}
+				  >
+					  <td style={{ width: '120px', height: '55px' }}>
+					  {isEditing === item.id ? (
+						  <>
+						  <a href="#" onClick={(e) => { e.preventDefault(); handleSaveClick(item); }}>Save</a>{' '}
+						  <a href="#" onClick={(e) => { e.preventDefault(); handleCancelClick(); }}>Cancel</a>
+						  </>
+					  ) : (
+						  <>
+						  {isItemHovered && (
+							  <>
+							  <a href="#" onClick={(e) => {e.preventDefault(); handleEditClick(item);}}>Edit</a>{' '}
+							  <a href="#" onClick={(e) => {e.preventDefault(); handleDeleteClick(item.id);}}>Delete</a>{' '}
+							  </>
+						  )}
+						  {!isItemHovered && <div className='h6'> {item.id} </div>}
+						  </>
+					  )}
+					  </td>
+					  <td>
+					  {isEditing === item.id ? (
+						  <Form.Control type='text' name='name' value={formData.name} onChange={handleInputChange}/>
+					  ) : (
+						  <div className='h6'> {item.name} </div>
+					  )}
+					  </td>
+					  <td>
+					  {isEditing === item.id ? (
+						  <Form.Control type='number' name='age' value={formData.age} onChange={handleInputChange}/>
+					  ) : (
+						  <div className='h6'> {item.age} </div>
+					  )}
+					  </td>
+					  <td>
+					  {isEditing === item.id ? (
+						  <Form.Control type='email' name='email' value={formData.email} onChange={handleInputChange} />
+					  ) : (
+						  <div className='h6'>{item.email} </div>
+					  )}
+					  </td>
+					  <td>
+					  {isEditing === item.id ? (
+						  <Form.Control type='text' name='phone' value={formData.phone} onChange={handleInputChange}/>
+					  ) : (
+						  <div className='h6'> {item.phone} </div>
+					  )}
+					  </td>
+				  </tr>
+				  );
+			  })}
+			  </tbody>
+		  </Table>
+		</div>
+	  )}
+	</>
   );
 }
 export default DataTable;
